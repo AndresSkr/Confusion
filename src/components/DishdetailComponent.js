@@ -53,10 +53,13 @@ const DishDetail = (props) => {
     }
 
     return (
-        <div className="row">
-            {renderDish()}
-            {renderComments()}
+        <div className="container">
+            <div className="row">
+                {renderDish()}
+                {renderComments()}
+            </div>
         </div>
+
     )
 }
 
