@@ -1,43 +1,31 @@
 import React from 'react';
-import { Card,CardBody,CardHeader, Media, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Card, CardBody, CardHeader, Media, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 function RenderLeaders({ leaders }) {
-    leaders = leaders.map((leader) => {
-        console.log(leader);
-        return (
-            <>
-                <li key={leader.id} className="mb-2">
-                    <div className="row">
-                        <div className="col-12 col-md-2">
-                            <img width="100%" src={leader.image} />
-                        </div>
-                        <div className="col-12 col-md-10">
-                            <h4>
-                                {leader.name}
-                            </h4>
-                            <div>
-                                <p>
-                                    {leader.designation}
-                                </p>
-                            </div>
-                            <div>
-                                <p>
-                                    {leader.description}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                </li>
-                <hr />
-            </>
+    leaders = leaders.map((leader) => {
+        return (
+            <div key={leader.id} className="m-3">
+                <Media tag="li">
+                    <Media left middle>
+                        <Media object src={leader.image} alt={leader.name}></Media>
+                    </Media>
+                    <Media body className="ml-5">
+                        <Media heading>{leader.name}</Media>
+                        <p>{leader.designation}</p>
+                        <p>{leader.description}</p>
+                    </Media>
+                </Media>
+            </div>
         )
     })
-    return (
+
+    return(
         <>
-            {leaders}
+         {leaders}
         </>
+       
     )
 
 }
@@ -99,7 +87,7 @@ const About = (props) => {
                 </div>
                 <div className="col-12">
                     <Media style={{ listStyleType: "none" }} list>
-                       <RenderLeaders leaders={props.leaders}/>
+                        <RenderLeaders leaders={props.leaders} />
                     </Media>
                 </div>
             </div>
