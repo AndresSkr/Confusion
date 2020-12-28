@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponet';
 import { baseUrl } from '../shared/baseUrl';
-
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
 const minLength = (len) => (val) => val && (val.length >= len);
@@ -23,7 +23,7 @@ function CommentForm(props) {
     const hadleSubmit = (values) => {
 
         console.log(props);
-        props.addComment(props.dishId, values.rating, values.author, values.comment);
+        props.postComment(props.dishId, values.rating, values.author, values.comment);
     }
 
     return (
@@ -114,19 +114,22 @@ function CommentForm(props) {
     )
 }
 
-function RenderComments({ comments, addComment, dishId }) {
+function RenderComments({ comments, postComment, dishId }) {
 
     comments = comments.map((comment) => {
         return (
-            <li key={comment.id}>
-                <p>{comment.comment}</p>
-                <p>-- {comment.author} , {new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit'
-                }).format(new Date(comment.date))}
-                </p>
-            </li>
+            <Fade in>
+                <li key={comment.id}>
+                    <p>{comment.comment}</p>
+                    <p>-- {comment.author} , {new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit'
+                    }).format(new Date(comment.date))}
+                    </p>
+                </li>
+            </Fade>
+
         )
     })
 
@@ -134,10 +137,12 @@ function RenderComments({ comments, addComment, dishId }) {
         <div className="col-12 col-md-5 m-1">
             <h4>Comments</h4>
             <ul className="list-unstyled">
-                {comments}
+                <Stagger in>
+                    {comments}
+                </Stagger>
             </ul>
             <CommentForm dishId={dishId}
-                addComment={addComment} />
+                postComment={postComment} />
         </div>
     )
 
@@ -146,13 +151,19 @@ function RenderComments({ comments, addComment, dishId }) {
 function RenderDish({ dish }) {
     return (
         <div key={dish.id} className="col-12 col-md-5 m-1">
-            <Card>
-                <CardImg top src={baseUrl + dish.image} alt={dish.name} />
-                <CardBody>
-                    <CardTitle>{dish.name}</CardTitle>
-                    <CardText>{dish.description}</CardText>
-                </CardBody>
-            </Card>
+            <FadeTransform in
+                transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
+                <Card>
+                    <CardImg top src={baseUrl + dish.image} alt={dish.name} />
+                    <CardBody>
+                        <CardTitle>{dish.name}</CardTitle>
+                        <CardText>{dish.description}</CardText>
+                    </CardBody>
+                </Card>
+            </FadeTransform>
+
         </div>
     );
 }
@@ -207,7 +218,7 @@ const DishDetail = (props) => {
                 <div className="row">
                     <RenderDish dish={props.dish} />
                     <RenderComments comments={props.comments}
-                        addComment={props.addComment}
+                        postComment={props.postComment}
                         dishId={props.dish.id} />
                 </div>
 
