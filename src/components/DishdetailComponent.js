@@ -5,14 +5,15 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Loading } from './LoadingComponet';
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
 const minLength = (len) => (val) => val && (val.length >= len);
 
-function CommentForm() {
-    const [isModalOpen, setisModalOpen] = useState(false)
+function CommentForm(props) {
 
+    const [isModalOpen, setisModalOpen] = useState(false)
 
     const toggleModal = () => {
         setisModalOpen(!isModalOpen);
@@ -20,9 +21,10 @@ function CommentForm() {
 
     const hadleSubmit = (values) => {
 
-        console.log("Current States ", JSON.stringify(values));
-        alert("Current States " + JSON.stringify(values));
+        console.log(props);
+        props.addComment(props.dishId, values.rating, values.author, values.comment);
     }
+
     return (
 
         <>
@@ -62,7 +64,7 @@ function CommentForm() {
 
                                     required,
                                     minLength: minLength(3),
-                                    maxLength: maxLength(30)
+                                    maxLength: maxLength(15)
                                 }} />
                             <Errors
                                 className="text-danger"
@@ -82,7 +84,7 @@ function CommentForm() {
                                 model=".comment"
                                 id="comment"
                                 name="comment"
-                                rows="12"
+                                rows="6"
                                 className="form-control m-2"
                                 validators={{
                                     required,
@@ -111,7 +113,7 @@ function CommentForm() {
     )
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
 
     comments = comments.map((comment) => {
         return (
@@ -133,7 +135,8 @@ function RenderComments({ comments }) {
             <ul className="list-unstyled">
                 {comments}
             </ul>
-            <CommentForm />
+            <CommentForm dishId={dishId}
+                addComment={addComment} />
         </div>
     )
 
@@ -155,16 +158,32 @@ function RenderDish({ dish }) {
 
 const DishDetail = (props) => {
 
-
-
-    if (props.dish == null) {
+    if (props.dishesLoading) {
+        console.log('cargando');
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    else if (props.errMess) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        );
+    } 
+    else if (props.dish == null) {
         return (
             <div>
 
             </div>
         )
     } else {
-
         return (
             <div className="container">
                 <div className="row">
@@ -186,7 +205,9 @@ const DishDetail = (props) => {
                 </div>
                 <div className="row">
                     <RenderDish dish={props.dish} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.dish.id} />
                 </div>
 
             </div>
