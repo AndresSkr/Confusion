@@ -1,31 +1,46 @@
 import React from 'react';
 import { Card, CardBody, CardHeader, Media, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
+import { baseUrl } from '../shared/baseUrl'
+import { Loading } from './LoadingComponet';
+import { Fade, Stagger } from 'react-animation-components';
 function RenderLeaders({ leaders }) {
 
-    leaders = leaders.map((leader) => {
+    if (leaders.isLoading) {
         return (
-            <div key={leader.id} className="m-3">
-                <Media tag="li">
-                    <Media left middle>
-                        <Media object src={leader.image} alt={leader.name}></Media>
-                    </Media>
-                    <Media body className="ml-5">
-                        <Media heading>{leader.name}</Media>
-                        <p>{leader.designation}</p>
-                        <p>{leader.description}</p>
-                    </Media>
-                </Media>
-            </div>
+            <Loading />
         )
-    })
+    } else if (leaders.errMess) {
+        return (
+            <h4> {leaders.errMess} </h4>
+        );
+    } else
 
-    return(
+        leaders = leaders.leaders.map((leader) => {
+            return (
+
+                <div key={leader.id} className="m-3">
+                    <Stagger in>
+                        <Media tag="li">
+                            <Media left middle>
+                                <Media object src={baseUrl + leader.image} alt={leader.name}></Media>
+                            </Media>
+                            <Media body className="ml-5">
+                                <Media heading>{leader.name}</Media>
+                                <p>{leader.designation}</p>
+                                <p>{leader.description}</p>
+                            </Media>
+                        </Media>
+                    </Stagger>
+                </div>
+
+            )
+        })
+    return (
         <>
-         {leaders}
+            {leaders}
         </>
-       
+
     )
 
 }
@@ -86,9 +101,12 @@ const About = (props) => {
                     <h2>Corporate Leadership</h2>
                 </div>
                 <div className="col-12">
-                    <Media style={{ listStyleType: "none" }} list>
-                        <RenderLeaders leaders={props.leaders} />
-                    </Media>
+                    <Fade in>
+                        <Media style={{ listStyleType: "none" }} list>
+                            <RenderLeaders leaders={props.leaders} />
+                        </Media>
+                    </Fade>
+
                 </div>
             </div>
         </div>

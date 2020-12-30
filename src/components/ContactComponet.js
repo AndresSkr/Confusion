@@ -16,6 +16,7 @@ const Contact = (props) => {
     function handleSubmit(values) {
         console.log("Current States ", JSON.stringify(values));
         alert("Current States " + JSON.stringify(values));
+        console.log(props.postFeedBack(values));
         props.resetFeedbackForm();
     }
 
